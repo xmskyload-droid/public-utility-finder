@@ -104,6 +104,152 @@ body {
   position: relative;
 }
 
+/* App enter animation — main UI fades in after splash */
+.app-root-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-root-enter {
+  animation: appReveal 600ms 100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── Splash Screen ─────────────────────────────────────────────────────────── */
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: radial-gradient(ellipse at 50% 40%, #0e2033 0%, #080d1a 60%, #040810 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  overflow: hidden;
+  animation: fadeIn 300ms ease both;
+  will-change: opacity, transform;
+}
+
+.splash-exit {
+  animation: splashExit 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
+/* Floating particle orbs in background */
+.splash-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.splash-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-teal);
+  opacity: 0;
+  animation: particleFloat 4s ease-in-out infinite;
+}
+
+.splash-particle-1 { width: 6px;  height: 6px;  top: 20%; left: 15%; animation-delay: 0s;    background: var(--color-teal); }
+.splash-particle-2 { width: 4px;  height: 4px;  top: 65%; left: 80%; animation-delay: 0.5s;  background: var(--color-emerald); }
+.splash-particle-3 { width: 8px;  height: 8px;  top: 75%; left: 20%; animation-delay: 1s;    background: var(--color-teal-light); }
+.splash-particle-4 { width: 5px;  height: 5px;  top: 30%; left: 85%; animation-delay: 1.5s;  background: var(--color-emerald-light); }
+.splash-particle-5 { width: 3px;  height: 3px;  top: 50%; left: 50%; animation-delay: 2s;    background: var(--color-teal); }
+.splash-particle-6 { width: 7px;  height: 7px;  top: 15%; left: 60%; animation-delay: 2.5s;  background: var(--color-emerald); }
+
+/* Logo container */
+.splash-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  transform: translateY(30px) scale(0.92);
+  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.splash-logo.splash-logo-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Icon with ring pulse effect */
+.splash-logo-icon {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-teal), var(--color-emerald));
+  border-radius: 28px;
+  box-shadow: 0 0 40px rgba(20, 184, 166, 0.5), 0 20px 60px rgba(0,0,0,0.4);
+  font-size: 48px;
+  animation: splashIconFloat 3s ease-in-out infinite;
+}
+
+.splash-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 36px;
+  border: 2px solid rgba(20, 184, 166, 0.4);
+  animation: splashRingPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.splash-ring-2 {
+  inset: -24px;
+  border-radius: 44px;
+  border-color: rgba(20, 184, 166, 0.2);
+  animation: splashRingPulse 2s ease-out 0.4s infinite;
+}
+
+.splash-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--color-teal-light), var(--color-emerald-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+  margin: 0;
+  line-height: 1;
+}
+
+.splash-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* Loading dots */
+.splash-dots {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.splash-dots.splash-dots-visible {
+  opacity: 1;
+}
+
+.splash-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-teal);
+  animation: splashDotBounce 1.2s ease-in-out infinite;
+}
+
+.splash-dot:nth-child(2) { animation-delay: 0.15s; background: var(--color-teal-light); }
+.splash-dot:nth-child(3) { animation-delay: 0.3s;  background: var(--color-emerald-light); }
+
 /* ─── Navbar ────────────────────────────────────────────────────────────────── */
 .navbar {
   height: var(--navbar-h);
@@ -448,7 +594,7 @@ body {
   flex-shrink: 0;
   box-sizing: border-box;
   transition: all 350ms cubic-bezier(0.16, 1, 0.3, 1);
-  animation: cardFadeIn 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: cardFadeIn 550ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .toilet-card::before {
@@ -599,16 +745,11 @@ body {
 .mini-badge.probably-open { border-color: #F59E0B; color: #F59E0B; background: rgba(245,158,11,0.1); }
 .mini-badge.unknown { border-color: #6b7280; color: #9ca3af; }
 
-/* Staggered card load fade-in */
+/* Staggered card load fade-in — spring overshoot effect */
 @keyframes cardFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0%   { opacity: 0; transform: translateY(28px) scale(0.97); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .toilet-card:nth-child(1) { animation-delay: 40ms; }
@@ -873,7 +1014,7 @@ body {
   align-items: flex-end;
   justify-content: flex-end;
   padding: 0;
-  animation: fadeIn var(--duration-normal) var(--ease-out);
+  animation: overlayFadeIn 350ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (min-width: 768px) {
@@ -894,7 +1035,7 @@ body {
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-xl);
-  animation: slideUp var(--duration-slow) var(--ease-out);
+  animation: modalSpringIn 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (min-width: 768px) {
@@ -1733,7 +1874,23 @@ body {
     display: flex;
     flex-direction: column;
     overflow: visible;
+    animation: sheetEnter 800ms 2.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
+
+@keyframes sheetEnter {
+  from {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(calc(90vh - var(--sheet-height, 55vh) - 12px));
+  }
+  to {
+    transform: translateY(calc(90vh - var(--sheet-height, 55vh)));
+    opacity: 1;
+  }
+}
 
   .sidebar.dragging {
     transition: none !important;
@@ -1966,6 +2123,51 @@ body {
 @keyframes slideUp {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* ─── App & Splash Keyframes ────────────────────────────────────────────────── */
+@keyframes appReveal {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes splashExit {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.04); }
+}
+
+@keyframes splashIconFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes splashRingPulse {
+  0%   { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.5); }
+}
+
+@keyframes particleFloat {
+  0%   { opacity: 0;   transform: translateY(0) scale(1); }
+  20%  { opacity: 0.7; }
+  80%  { opacity: 0.4; }
+  100% { opacity: 0;   transform: translateY(-60px) scale(0.6); }
+}
+
+@keyframes splashDotBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-10px); }
+}
+
+/* ─── Detail Modal Spring Entrance ─────────────────────────────────────────── */
+@keyframes modalSpringIn {
+  0%   { opacity: 0; transform: translateY(40px) scale(0.96); }
+  60%  { opacity: 1; transform: translateY(-6px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to   { opacity: 1; backdrop-filter: blur(8px); }
 }
 
 @keyframes slideDown {
