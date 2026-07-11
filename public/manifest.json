@@ -1,0 +1,24 @@
+{
+  "name": "NearLoo",
+  "short_name": "NearLoo",
+  "description": "Find clean toilets near you in Kerala",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080d1a",
+  "theme_color": "#14B8A6",
+  "icons": [
+    {
+      "src": "/toilet-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/toilet-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["utilities", "navigation"],
+  "lang": "en",
+  "orientation": "portrait-primary"
+}
