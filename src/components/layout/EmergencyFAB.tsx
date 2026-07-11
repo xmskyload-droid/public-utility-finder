@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 
 export default function EmergencyFAB() {
-  const { findNearest, userLocation, isDetailOpen } = useAppStore();
+  const { findNearest, userLocation, isDetailOpen, sheetHeight } = useAppStore();
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -15,7 +15,7 @@ export default function EmergencyFAB() {
   if (isDetailOpen) return null;
 
   return (
-    <div className="emergency-fab">
+    <div className="emergency-fab" style={{ '--sheet-height': `${sheetHeight}vh` } as React.CSSProperties}>
       <button
         className={`emergency-btn ${loading ? 'loading' : ''}`}
         onClick={handleClick}

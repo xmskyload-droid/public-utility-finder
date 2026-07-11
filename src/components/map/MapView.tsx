@@ -32,6 +32,7 @@ function getMarkerSvg(color: string, size: number = 36): string {
 }
 
 export default function MapView() {
+  const sheetHeight = useAppStore((s) => s.sheetHeight);
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletMap = useRef<any>(null);
   const markersLayer = useRef<any>(null);
@@ -238,7 +239,7 @@ export default function MapView() {
   }
 
   return (
-    <div className="map-container">
+    <div className="map-container" style={{ '--sheet-height': `${sheetHeight}vh` } as React.CSSProperties}>
       <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
 
       {/* Locate me button */}

@@ -36,6 +36,8 @@ interface AppState {
   isAddToiletOpen: boolean;
   setAddToiletOpen: (open: boolean) => void;
   isEmergencyLoading: boolean;
+  sheetHeight: number;
+  setSheetHeight: (height: number) => void;
 
   // User
   user: UserProfile | null;
@@ -115,6 +117,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   isAddToiletOpen: false,
   setAddToiletOpen: (open) => set({ isAddToiletOpen: open }),
   isEmergencyLoading: false,
+  sheetHeight: 55,
+  setSheetHeight: (height) => set({ sheetHeight: height }),
 
   user: {
     uid: 'local-user',

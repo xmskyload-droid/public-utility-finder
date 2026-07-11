@@ -1646,35 +1646,184 @@ body {
 }
 
 @media (max-width: 768px) {
-  .sidebar {
+  /* Layout Root Overrides */
+  .app-body {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .map-container {
     position: absolute;
+    inset: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 10;
+  }
+
+  /* Header Optimization */
+  .navbar {
+    padding: 0 var(--space-3);
+    height: 56px;
+  }
+  .navbar-logo-text {
+    display: none; /* hide logo text on narrow screens */
+  }
+  .navbar-search {
+    max-width: 220px;
+  }
+  .navbar-search-input {
+    height: 36px;
+    font-size: 13px;
+    padding: 0 var(--space-3) 0 36px;
+  }
+  .navbar-search-icon {
+    left: var(--space-3);
+    width: 16px;
+    height: 16px;
+  }
+  .navbar-actions {
+    gap: var(--space-2);
+  }
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  /* Dim background map overlay */
+  .mobile-backdrop-dim {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 13, 26, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 950;
+    transition: opacity 350ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  }
+  .mobile-backdrop-dim.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Draggable Bottom Sheet */
+  .sidebar {
+    position: fixed;
     left: 0;
-    top: 0;
+    right: 0;
     bottom: 0;
-    width: 100%;
-    max-width: 430px;
-    z-index: 300;
-    transform: translateX(0);
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 90vh !important;
+    z-index: 1000;
+    border-top-left-radius: 28px;
+    border-top-right-radius: 28px;
+    background: rgba(14, 21, 40, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: none;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(calc(90vh - var(--sheet-height, 55vh)));
+    transition: transform 350ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .sidebar.dragging {
+    transition: none !important;
   }
 
   .sidebar.collapsed {
-    transform: translateX(-100%);
+    transform: translateY(100%) !important;
+  }
+
+  /* Mobile Drag Handle */
+  .sidebar-drag-handle {
     width: 100%;
-  }
-
-  .sidebar-toggle {
+    height: 24px;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    flex-shrink: 0;
+    touch-action: none;
+  }
+  .sidebar-drag-handle:active {
+    cursor: grabbing;
+  }
+  .sidebar-drag-indicator {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-full);
   }
 
-  .emergency-fab {
-    bottom: var(--space-5);
+  /* Category Navigation (Horizontal Snapping) */
+  .utility-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--space-2) var(--space-4);
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .utility-tab {
+    scroll-snap-align: start;
+    padding: 6px 12px;
+    min-width: 80px;
+    height: 44px; /* touch target standard */
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+  .utility-tab-icon {
+    font-size: 14px;
+  }
+  .utility-tab-label {
+    font-size: 12px;
   }
 
-  .toilet-card {
-    height: 140px;
-    min-height: 140px;
+  /* Sidebar header & filters inside drawer */
+  .sidebar-header {
+    padding: var(--space-3) var(--space-4);
+  }
+  .filter-panel {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  /* Toilet List scrolling container */
+  .toilet-list {
+    flex: 1;
+    overflow-y: auto;
     padding: 16px;
     gap: 16px;
+    /* Bottom padding to prevent Emergency FAB from covering the last card */
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Toilet Cards on Mobile */
+  .toilet-card {
+    width: 100%;
+    height: 160px;
+    min-height: 160px;
+    padding: 16px;
+    gap: 16px;
+    border-radius: 20px;
+  }
+  .toilet-card.selected,
+  .toilet-card:hover {
+    height: 240px !important;
+    min-height: 240px !important;
+    transform: translateY(-4px) scale(1.02);
   }
   .toilet-card-score {
     width: 52px;
@@ -1686,20 +1835,37 @@ body {
   .confidence-ring-text {
     font-size: 11px;
   }
+
   .skeleton-card {
-    height: 140px;
-    min-height: 140px;
+    width: 100%;
+    height: 160px;
+    min-height: 160px;
     padding: 16px;
     gap: 16px;
+    border-radius: 20px;
     margin-bottom: 16px;
   }
   .skeleton-ring {
     width: 52px;
     height: 52px;
   }
-  .toilet-list {
-    padding: 16px 20px;
-    gap: 16px;
+
+  /* Synchronized Float Controls positions */
+  .map-controls {
+    right: 16px !important;
+    bottom: calc(var(--sheet-height, 55vh) + 16px + env(safe-area-inset-bottom, 0px)) !important;
+    transition: bottom 350ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  }
+
+  .emergency-fab {
+    bottom: calc(var(--sheet-height, 55vh) + 16px + env(safe-area-inset-bottom, 0px)) !important;
+    transition: bottom 350ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  }
+
+  /* Mobile Zoom Control overrides */
+  .leaflet-bottom.leaflet-right {
+    margin-bottom: calc(var(--sheet-height, 55vh) + 72px) !important;
+    transition: margin-bottom 350ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
   }
 }
 

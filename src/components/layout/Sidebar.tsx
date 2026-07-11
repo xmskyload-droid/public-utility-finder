@@ -138,20 +138,106 @@ export default function Sidebar() {
   const {
     isSidebarOpen, filteredToilets, selectedToilet, selectToilet,
     filters, setFilter, clearFilters, isLoadingToilets,
+    sheetHeight, setSheetHeight,
   } = useAppStore();
+
+  const [isDragging, setIsDragging] = React.useState(false);
+  const dragStartY = React.useRef(0);
+  const dragStartHeight = React.useRef(0);
+  const [localHeight, setLocalHeight] = React.useState(sheetHeight);
+
+  // Sync state with store changes (e.g. from map selections or reset actions)
+  React.useEffect(() => {
+    setLocalHeight(sheetHeight);
+  }, [sheetHeight]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    dragStartY.current = e.touches[0].clientY;
+    dragStartHeight.current = localHeight;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const deltaY = dragStartY.current - e.touches[0].clientY;
+    const deltaVh = (deltaY / window.innerHeight) * 100;
+    let newHeight = dragStartHeight.current + deltaVh;
+    newHeight = Math.max(20, Math.min(95, newHeight));
+    setLocalHeight(newHeight);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    const snaps = [25, 55, 90];
+    const nearest = snaps.reduce((prev, curr) =>
+      Math.abs(curr - localHeight) < Math.abs(prev - localHeight) ? curr : prev
+    );
+    setLocalHeight(nearest);
+    setSheetHeight(nearest);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    dragStartY.current = e.clientY;
+    dragStartHeight.current = localHeight;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaY = dragStartY.current - moveEvent.clientY;
+      const deltaVh = (deltaY / window.innerHeight) * 100;
+      let newHeight = dragStartHeight.current + deltaVh;
+      newHeight = Math.max(20, Math.min(95, newHeight));
+      setLocalHeight(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      const snaps = [25, 55, 90];
+      const nearest = snaps.reduce((prev, curr) =>
+        Math.abs(curr - localHeight) < Math.abs(prev - localHeight) ? curr : prev
+      );
+      setLocalHeight(nearest);
+      setSheetHeight(nearest);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
 
   const activeCount = Object.entries(filters).filter(
     ([k, v]) => k !== 'searchQuery' && k !== 'activeCategory' && v === true
   ).length;
 
   return (
-    <aside
-      className={`sidebar ${isSidebarOpen ? '' : 'collapsed'}`}
-      aria-label="Nearby toilets"
-      aria-hidden={!isSidebarOpen}
-    >
-      {/* Utility Category Nav */}
-      <UtilityNav />
+    <>
+      {/* Mobile backdrop dim overlay - visible only when expanded to 90vh */}
+      <div
+        className={`mobile-backdrop-dim ${localHeight === 90 ? 'visible' : ''}`}
+        onClick={() => {
+          setLocalHeight(55);
+          setSheetHeight(55);
+        }}
+      />
+
+      <aside
+        className={`sidebar ${isSidebarOpen ? '' : 'collapsed'} ${isDragging ? 'dragging' : ''}`}
+        aria-label="Nearby toilets"
+        aria-hidden={!isSidebarOpen}
+        style={{ '--sheet-height': `${localHeight}vh` } as React.CSSProperties}
+      >
+        {/* Mobile drag handle */}
+        <div
+          className="sidebar-drag-handle"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+        >
+          <div className="sidebar-drag-indicator" />
+        </div>
+
+        {/* Utility Category Nav */}
+        <UtilityNav />
 
       {/* Header */}
       <div className="sidebar-header">
@@ -214,5 +300,6 @@ export default function Sidebar() {
         )}
       </div>
     </aside>
+  </>
   );
 }
